@@ -1,6 +1,6 @@
 from itertools import *
 
-from lab2.decorators import bracket
+from decorators import bracket
 
 #API z labow
 
