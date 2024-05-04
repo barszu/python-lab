@@ -1,8 +1,8 @@
 import pygame
 from LinkedListsCollections import CyclicList
 from Shapes import ClickableTriangle
-from GameCommons import find_polygon
 from Options import window_sizes, background_color, colours
+from GameEngineCreator import GameEngineCreator
 import math
 
 def get_pyramid_triangles(measures, size, levels_no):
@@ -61,37 +61,20 @@ def main():
             ClickableTriangle(triangle, CyclicList(colours), screen=screen, border_color=(0, 0, 0), border_width=triangle_border_width, center_point=center)
         )
 
+    game_engine = GameEngineCreator(all_polygons, screen, background_color, after_click_function=None)
+    def handle_click(clicked_triangle):
+        (x, y) = clicked_triangle.center_point
+        # print(f"Kliknięto w trójkąt o środku w punkcie ({x}, {y})")
+        r = triangle_side_size / math.sqrt(3) - triangle_border_width
+        for dx, dy in [(-r, 0), (r, 0), (0, -r), (0, r)]:
+            new_x = x + dx
+            new_y = y + dy
+            neighbour_triangle = game_engine.find_polygon((new_x, new_y))
+            if neighbour_triangle is not None:
+                neighbour_triangle.change_color()
 
-    def on_screen_clicked(mouse_pos):
-        clicked_triangle = find_polygon(all_polygons, mouse_pos)
-        if clicked_triangle is not None:
-            (x, y) = clicked_triangle.center_point
-            print(f"Kliknięto w trójkąt o środku w punkcie ({x}, {y})")
-            r = triangle_side_size / math.sqrt(3) - triangle_border_width
-            for dx, dy in [(-r, 0), (r, 0), (0, -r), (0, r)]:
-                new_x = x + dx
-                new_y = y + dy
-                neighbour_triangle = find_polygon(all_polygons, (new_x, new_y))
-                if neighbour_triangle is not None:
-                    neighbour_triangle.change_color()
-
-            return clicked_triangle
-        return None
-
-    running = True
-    while running:
-
-        screen.fill(background_color)
-        for polygon in all_polygons:
-            polygon.draw(screen)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                on_screen_clicked(event.pos)
-
-        pygame.display.flip()
+    game_engine.after_click_function = handle_click
+    game_engine.run()
 
     pygame.quit()
 

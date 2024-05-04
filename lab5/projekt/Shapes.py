@@ -77,9 +77,3 @@ class ClickableTriangle(ClickablePolygon):
         self.center_point = center_point #center of the triangle label only
         super().__init__(vertices, colors_collection, screen, border_color, border_width)
         assert len(vertices) == 3, "Triangle must have 3 vertices"
-
-
-
-############################################################################################################
-
-
