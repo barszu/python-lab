@@ -70,6 +70,8 @@ class ClickablePolygon:
             screen = self.screen
         self.curr_color = self.colors_collection.next()
         self.update_surface(screen)
+        self.draw(screen)
+        pygame.display.flip()
 
 
 class ClickableTriangle(ClickablePolygon):

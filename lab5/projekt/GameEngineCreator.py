@@ -1,4 +1,5 @@
 import pygame
+import random
 
 class GameEngineCreator:
     """
@@ -47,7 +48,7 @@ class GameEngineCreator:
                 return p
         return None
 
-    def __init__(self, polygons = [], screen = None, background_color = (255, 255, 255), after_click_function = None):
+    def __init__(self, polygons = [], screen = None, background_color = (255, 255, 255), after_click_function = None, initial_shuffles = 0):
         """
         Constructs all the necessary attributes for the Game Engine Creator object.
 
@@ -66,6 +67,7 @@ class GameEngineCreator:
         self.screen = screen
         self.background_color = background_color
         self.after_click_function = after_click_function
+        self.initial_shuffles = initial_shuffles
 
     def on_screen_clicked(self, mouse_pos, later_do_function= None):
         """
@@ -93,23 +95,35 @@ class GameEngineCreator:
 
         return None
 
+    def init_game(self):
+        """
+        Initializes the game.
+        """
+        self.screen.fill(self.background_color)
+        for polygon in self.polygons:
+            polygon.draw(self.screen)
+        pygame.display.flip()
+
+    def shuffle_polygons(self):
+        """
+        Shuffles the polygons in the game.
+        """
+        for i in range(self.initial_shuffles):
+            polygon = random.choice(self.polygons)
+            self.on_screen_clicked(polygon.center_point, self.after_click_function)
+
     def run(self):
         """
         Starts the game loop.
         """
         running = True
         while running:
-            self.screen.fill(self.background_color)
-            for polygon in self.polygons:
-                polygon.draw(self.screen)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.on_screen_clicked(event.pos, self.after_click_function)
 
-            pygame.display.flip()
 
 
 

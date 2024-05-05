@@ -1,7 +1,7 @@
 import pygame
 from LinkedListsCollections import CyclicList
 from Shapes import ClickableTriangle
-from Options import window_sizes, background_color, colours
+from Options import window_sizes, background_color, colours, shuffle_moves_no
 from GameEngineCreator import GameEngineCreator
 import math
 
@@ -61,7 +61,7 @@ def main():
             ClickableTriangle(triangle, CyclicList(colours), screen=screen, border_color=(0, 0, 0), border_width=triangle_border_width, center_point=center)
         )
 
-    game_engine = GameEngineCreator(all_polygons, screen, background_color, after_click_function=None)
+    game_engine = GameEngineCreator(all_polygons, screen, background_color, after_click_function=None, initial_shuffles=shuffle_moves_no)
     def handle_click(clicked_triangle):
         (x, y) = clicked_triangle.center_point
         # print(f"Kliknięto w trójkąt o środku w punkcie ({x}, {y})")
@@ -74,6 +74,8 @@ def main():
                 neighbour_triangle.change_color()
 
     game_engine.after_click_function = handle_click
+    game_engine.init_game()
+    game_engine.shuffle_polygons()
     game_engine.run()
 
     pygame.quit()
