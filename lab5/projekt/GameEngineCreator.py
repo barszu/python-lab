@@ -1,5 +1,9 @@
+import time
+
 import pygame
 import random
+import numpy
+import scipy.ndimage
 
 class GameEngineCreator:
     """
@@ -104,13 +108,14 @@ class GameEngineCreator:
             polygon.draw(self.screen)
         pygame.display.flip()
 
-    def shuffle_polygons(self):
+    def shuffle_polygons(self, with_animation = False):
         """
         Shuffles the polygons in the game.
         """
         for i in range(self.initial_shuffles):
             polygon = random.choice(self.polygons)
             self.on_screen_clicked(polygon.center_point, self.after_click_function)
+            time.sleep(0.01) if with_animation else None
 
     def run(self):
         """
@@ -123,6 +128,48 @@ class GameEngineCreator:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.on_screen_clicked(event.pos, self.after_click_function)
+                    if self.check_win():
+                        self.display_win_message()
+                        pygame.time.wait(5000) # Czekaj 5 sekund
+                        running = False
+
+
+    def check_win(self):
+        """
+        Checks if the game is won.
+        """
+        curr_color = self.polygons[0].curr_color
+        for polygon in self.polygons:
+            if polygon.curr_color != curr_color:
+                return False
+        return True
+
+    def blur_screen(self):
+        """
+        Applies a blur effect to the screen.
+        """
+        # Pobierz tablicę pikseli z ekranu
+        pixels = pygame.surfarray.array3d(self.screen)
+
+        # Zastosuj rozmycie gaussowskie
+        blurred_pixels = scipy.ndimage.filters.gaussian_filter(pixels, sigma=5)
+
+        # Przekształć rozmyte piksele z powrotem na format zrozumiały dla Pygame
+        blurred_pixels = pygame.surfarray.make_surface(blurred_pixels)
+
+        # Wyświetl rozmyte piksele na ekranie
+        self.screen.blit(blurred_pixels, (0, 0))
+
+    def display_win_message(self):
+        """
+        Displays a win message on the screen.
+        """
+        self.blur_screen()  # Rozmyj ekran
+        font = pygame.font.Font(None, 120)  # Ustaw rozmiar czcionki
+        text = font.render("Wygrana!", 1, (255, 51, 204))  # Utwórz tekst
+        text_pos = text.get_rect(centerx=self.screen.get_width() / 2, centery=self.screen.get_height() / 2)  # Ustaw pozycję tekstu na środku ekranu
+        self.screen.blit(text, text_pos)  # Wyświetl tekst na ekranie
+        pygame.display.flip()  # Aktualizuj ekran
 
 
 
