@@ -32,6 +32,6 @@ def game_with_AI(depth):
             break
 
 if __name__ == '__main__':
-    depth = 4
+    depth = 6
     game_with_AI(depth)
 
