@@ -27,6 +27,7 @@ def minimax_alpha_beta(board, depth, alpha, beta, maximizingPlayer, player, scor
             b_copy = [row[:] for row in board]
             make_move(b_copy, col, player)
             new_score = minimax_alpha_beta(b_copy, depth - 1, alpha, beta, False, player, score_position_fun)[1]
+            new_score -= 100 #aby bardziej respektowac blizsze kroki
             if new_score > value:
                 value = new_score
                 best_col = col
@@ -42,6 +43,7 @@ def minimax_alpha_beta(board, depth, alpha, beta, maximizingPlayer, player, scor
             b_copy = [row[:] for row in board]
             make_move(b_copy, col, opp_player)
             new_score = minimax_alpha_beta(b_copy, depth - 1, alpha, beta, True, player, score_position_fun)[1]
+            new_score -= 100  # aby bardziej respektowac blizsze kroki
             if new_score < value:
                 value = new_score
                 best_col = col
